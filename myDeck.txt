@@ -1,0 +1,286 @@
+[MyDeck]
+
+name = Microdeck Summit
+
+rating = 1
+
+darray = 4,3,3,1
+
+wares = encryption, stealth
+
+[MySkills]
+
+computer = 4
+
+cybercombat = 4
+
+software = 3
+
+ElectronicWarfare = 1
+
+hacking = 6
+
+
+[MyAttributes]
+
+int = 6
+
+log = 5
+
+wil = 3
+
+edg = 1
+
+
+
+[BruteForce]
+skill = cybercombat
+attribute = log
+opposedby = Will (or device rating) + Firewall
+limitedby = Attack
+actiontype = complex
+marksrequired = 1
+description = Gain Mark (-4 for 2 Marks, -10 for 3 ), 1 Matrix Damage/2 net hits, Grid Hop
+
+[ChangeIcon]
+skill = computer
+attribute = log
+opposedby = Nothing
+limitedby = DataProcessing
+actiontype = simple
+marksrequired = 0
+description = Change icon to new image (Wrapper program required to *disguise* icon)
+
+[CheckOverwatchScore]
+skill = ElectronicWarfare
+attribute = log
+opposedby = 6d6
+limitedby = Sleaze
+actiontype = simple
+marksrequired = 0
+description = Learn Overwatch Score (before hits from this roll are added)
+
+[ControlDevice]
+skill = ElectronicWarfare
+attribute = int
+opposedby = INT + Firewall
+limitedby = Sleaze
+actiontype = complex
+marksrequired = 0
+description = THIS ONE IS SITUATIONAL. READ WITH CARE. Use device, action type same as action device is doing, Marks Req’d = 1 Free, 2 Simple, 3 Complex. Use your skills. Can command multiple Devices with same action if Owner
+
+[CrackFile]
+skill = hacking
+attribute = log
+opposedby = Protection Rating x 2
+limitedby = Attack
+actiontype = complex
+marksrequired = 1
+description = You remove the protection from a file, making it readable. This action doesn’t need to be performed on a file that isn’t protected, of course
+
+[CrashProgram]
+skill = Cybercombat
+attribute = log
+opposedby = INT + Firewall
+limitedby = Attack
+actiontype = complex
+marksrequired = 1
+description = Program stops running, can’t be reloaded until device is rebooted
+
+[DataSpike]
+skill = Cybercombat
+attribute = log
+opposedby = INT + Firewall
+limitedby = Attack
+actiontype = complex
+marksrequired = 0
+description = Cause Matrix Damage to target: [Attack] + 1 per net hit + 2 per mark on device
+
+[DisarmDataBomb]
+skill = software
+attribute = int
+opposedby = Bomb Rating x 2
+limitedby = Firewall
+actiontype = complex
+marksrequired = 0
+description = You attempt to disarm a Data Bomb that you have detected (usually as the result of a Matrix Perception ac-tion). If you score any net hits, the Data Bomb is removed and deleted. If not, the Data Bomb activates, causing its damage and possibly destroying any file to which it was attached (assuming it was set to destroy the file)
+
+[EditFile]
+skill = Computer
+attribute = log
+opposedby = INT + Firewall
+limitedby = DataProcessing
+actiontype = complex
+marksrequired = 1
+description = Create, change, copy, delete, or protect (test unopposed, Hits = protection Rating) file, sets off Data Bombs (so check first!)
+
+[EnterExitHost]
+skill = Computer
+attribute = log
+opposedby = Nothing
+limitedby = DataProcessing
+actiontype = complex
+marksrequired = 1
+description = Enter or exit host (return to grid you entered from).
+
+[EraseMark]
+skill = Computer
+attribute = log
+opposedby = WIL + Firewall
+limitedby = Attack
+actiontype = complex
+marksrequired = 3
+description = Remove Mark (-4 for 2 Marks, -10 for 3), need 3 Marks on target you are removing Marks from (need none on whoever marked the target)
+
+[FormatDevice]
+skill = Computer
+attribute = log
+opposedby = WIL + Firewall
+limitedby = Sleaze
+actiontype = complex
+marksrequired = 3
+description = When device is rebooted, won’t start back up until Software + LOG (12,1 hour) [Mental]. Devices that still have manual interface can be used manually (so you can fire a pistol with a trigger, etc.)
+
+[FullMatrixDefence]
+skill = Computer
+attribute = log
+opposedby = Nothing
+limitedby = Firewall
+actiontype = interrupt
+marksrequired = 0
+description = THIS ONE IS SITUATIONAL, READ WITH CARE. -10 Initiative, +WIL to Defense tests against Matrix Actions (lasts for rest of Turn)
+
+[GridHop]
+skill = Computer
+attribute = log
+opposedby = Nothing
+limitedby = DataProcessing
+actiontype = Complex
+marksrequired = 0
+description = Move to grid you have access to (if no access, Brute Force or Hack on the Fly)
+
+[HackOnTheFly]
+skill = Hacking
+attribute = log
+opposedby = INT + Firewall
+limitedby = Sleaze
+actiontype = Complex
+marksrequired = 0
+description = Gain Mark (-4 for 2 Marks, -10 for 3), 1 Matrix Perception/2 net hits, Grid Hop (Failure does not alert grid or DemiGod). Defence against GH is 4d6 for local grid or 6d6 for global grid.
+
+[Hide]
+skill = ElectronicWarfare
+attribute = int
+opposedby = INT + Data Processing
+limitedby = Sleaze
+actiontype = Complex
+marksrequired = 0
+description = Become hidden to target (can’t use if they have mark on you). Target must make new Matrix Perception roll to rediscover.
+
+[InviteMark]
+skill = Computer
+attribute = log
+opposedby = Nothing
+limitedby = DataProcessing
+actiontype = simple
+marksrequired = 0
+description = Let other icon put mark on you as Free Action, you decide # of marks & duration. Once placed, marks stay until duration expires, device rebooted or Remove Mark action taken.
+
+[JackOut]
+skill = Hardware
+attribute = wil
+opposedby = Logic + Attack
+limitedby = Firewall
+actiontype = simple
+marksrequired = 0
+description = Only roll if link-locked. User exits Matrix and reboot device, suffer Dumpshock if in VR at the time. If more than one link lock, each locker rolls their defence seperately and PC must beat all.
+
+[JamSignals]
+skill = electronicwarfare
+attribute = log
+opposedby = Nothing
+limitedby = Attack
+actiontype = complex
+marksrequired = 0
+description = Turns your device into jammer. Can’t use device for Matrix actions while jamming. Add hits to Noise rating within 100 meters for ALL devices. 
+
+[MatrixPerception]
+skill = computer
+attribute = log
+opposedby = LOG + Sleaze
+limitedby = DataProcessing
+actiontype = complex
+marksrequired = 0
+description = Find hidden icons or icons 100+ meters away. Analyze icon: 1 piece of info per hit. See page 235 for table of info that can be learned.
+
+[MatrixSearch]
+skill = computer
+attribute = int
+opposedby = Nothing
+limitedby = DataProcessing
+actiontype = simple
+marksrequired = 0
+description = Search for information in Matrix (see Matrix Search table, page 241). Searching for any info in a Host always has Base Time of 1 minute. Divide Base Time by Hits above Threshold. 
+
+[RebootDevice]
+skill = computer
+attribute = log
+opposedby = Willpower + Firewall
+limitedby = DataProcessing
+actiontype = simple
+marksrequired = 3
+description = Device reboots and comes back online at the end of the following combat turn. Device ceases electronic functions and disappears from the Matrix until the reboot is complete. When you choose this action, you can choose a delay of any amount of time between shutdown and reboot, though this can be overwritten by simply pushing the power button IRL.
+
+[SendMessage]
+skill = computer
+attribute = int
+opposedby = Nothing
+limitedby = DataProcessing
+actiontype = simple
+marksrequired = 0
+description = Use device to send short message/file or open live feed to commcode you know
+
+[SetDataBomb]
+skill = software
+attribute = log
+opposedby = Device Rating x 2
+limitedby = Sleaze
+actiontype = complex
+marksrequired = 1
+description = Rating: net hits, choose if trigger deletes file, does (Rating)d6 Matrix damage
+
+[Snoop]
+skill = electronicwarfare
+attribute = int
+opposedby = LOG + Firewall
+limitedby = Sleaze
+actiontype = complex
+marksrequired = 1
+description = Intercept Matrix traffic to and from target. Can also try and find the target via Matrix Perception
+
+[SpoofCommand]
+skill = hacking
+attribute = int
+opposedby = LOG + Firewall
+limitedby = Sleaze
+actiontype = complex
+marksrequired = 1
+description = You spoof a device’s owner’s identity, making the device think that your command is a legitimate one from its owner. You need one mark on the icon you are imitating; you do not need a mark on the target. The opposing dice roll is still based on the target, though. This trick only works on devices and agents, not IC, sprites, hosts, personas, or any other icons
+
+[SwitchInterfaceMode]
+skill = electronicwarfare
+attribute = int
+opposedby = Nothing
+limitedby = DataProcessing
+actiontype = simple
+marksrequired = 1
+description = You switch your perception from AR to VR or vice versa. Switching to VR causes your body to go limp, so don’t do it somewhere dangerous. If you switch from VR to AR, you lose the bonus Initiative Dice from VR (Changing Initiative, p. 160). If link-locked (p.229), you cannot switch interface modes. You can only do this to yourself; you can’t switch other people’s interface mode
+
+[TraceIcon]
+skill = computer
+attribute = int
+opposedby = WIL + Sleaze
+limitedby = Sleaze
+actiontype = complex
+marksrequired = 2
+description = Find physical location of device or persona
