@@ -268,16 +268,20 @@ def userInterface():
         elif choice == "4":
             addRemoveMarks()                        # Now working!  
         elif choice == "5":
-            #Insert fancy menu thing here, but for now a placeholder.
-            #setModLevel("noise")
-            print "boop."
+            for key in modifiers:
+                print key.title(), ": {}".format(modifiers[key])
+            mod = raw_input("Please select a modifier: ")
+            if mod.lower() not in modifiers:
+                print "\nModifier not found.\n"
+                anykey = raw_input("Press any key to continue.")
+            else:
+                setModLevel(mod)            
         elif choice == "6":
             setRunningSilent()                      # Toggle whether you're running silent or not. Could be done by setModLevel() but it doesn't need flexibility
         elif choice == "7":
             listMatrixAction()
         elif choice == "8":                         # This should be trivial, but for some reason it's just not working. Fuck it, not important for now.
-            damage = setMatrixDamage(deckmaxhp,deckdamage)
-            deckdamage = deckmaxhp - deckdamage          
+            print "Not implemented yet."
         elif choice == "9":
             setRunningSoftware()                    # Not written yet. Actually kinda important, but I'm being lazy.
         elif choice == "10":
