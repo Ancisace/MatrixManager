@@ -46,7 +46,6 @@ def listModifiers():
             pass
         else:
             print mod.title() + ": ", value
-    anykey = raw_input("Press any key to continue")
     return
 
 def setModLevel(mod):
@@ -108,7 +107,7 @@ def doMatrixAction(action, target):
         print "Invalid target entered. Check input and try again.\nYou entered: {}".format(target)
         anykey = raw_input("Press any key to continue")
         return False
-        #Migt remove the marks check. What if you just want to know how a command works? It's not like it's rolling dice for the user.
+        #Might remove the marks check. What if you just want to know how a command works? It's not like it's rolling dice for the user.
     if  readConfig(action,"marksrequired")> marksontarget[target]: # Got marks?
         print "You do not have enough marks on the target to carry out this action ({})".format(action)
         anykey = raw_input("Press any key to continue")
@@ -128,6 +127,7 @@ def doMatrixAction(action, target):
         print "Relevant limit: {} ({})".format(program["limitedby"].title(),decklimit)
         print "Opposed by: " + program["opposedby"] + "\n"
         print "Modifiers applied:"
+        listModifiers()
         print
         anykey = raw_input("Press any key to continue")
         userInterface()

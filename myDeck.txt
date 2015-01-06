@@ -16,9 +16,10 @@ cybercombat = 4
 
 software = 3
 
-electronicwarfare = 1
+electronicwarfare = 2
 
 hacking = 6
+hardware = 2
 
 
 [MyAttributes]
@@ -187,7 +188,7 @@ marksrequired = 0
 description = Let other icon put mark on you as Free Action, you decide # of marks & duration. Once placed, marks stay until duration expires, device rebooted or Remove Mark action taken.
 
 [JackOut]
-skill = Hardware
+skill = hardware
 attribute = wil
 opposedby = Logic + Attack
 limitedby = firewall
