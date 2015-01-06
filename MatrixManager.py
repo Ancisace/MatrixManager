@@ -1,6 +1,8 @@
-import ConfigParser, fileinput, itertools, pprint
+import ConfigParser, fileinput, itertools, pprint, readline
 config = ConfigParser.RawConfigParser()
-config.read('myDeck.txt')
+config.read('myDeck.ini')
+
+VERSION = "0.5"
 
 #Dict of deck configuration. This can be switched on the the fly. Array is configured by setMatrixArray()
 deckconfig = {
@@ -79,7 +81,7 @@ def setMatrixArray():
 ##    d = config.sections()
 ##    del d[0:3]
 ##    print "\nCommands"
-##    print 
+##    print
 ##    # I don't know this does what I want it to do, but it does it. Yay!
 ##    print "\n".join("%-20s %s"%(d[i],d[i+len(d)/2]) for i in range(len(d)/2))
 ##    action = raw_input("\nPlease select a command (\"quit\" to go back to main menu): ")
@@ -107,14 +109,14 @@ def doMatrixAction(action, target):
         print "Invalid target entered. Check input and try again.\nYou entered: {}".format(target)
         anykey = raw_input("Press any key to continue")
         return False
-    
+
     if  readConfig(action,"marksrequired")> marksontarget[target]:
         print "You do not have enough marks on the target to carry out this action ({})".format(action)
         anykey = raw_input("Press any key to continue")
         return False
     else:
         program = dict(config.items(action)) #config.items gets all the attributes in the "action" section in a list of tuples. Dict turns this into a dict.
-        skill = readConfig("MySkills", program["skill"]) 
+        skill = readConfig("MySkills", program["skill"])
         attribute = readConfig("MyAttributes", program["attribute"])
         decklimit = deckconfig[readConfig(action,"limitedby")]
         print action.upper() + " ({} action)".format(program['actiontype'].title())
@@ -151,7 +153,7 @@ def setOverwatchScore():
 def setRunningSoftware():
     """Activates and deactivates software up to the DP limit. Not implemented yet."""
     print "Not implemented yet."
-    return 
+    return
 
 def addRemoveTarget():
     """Add or remove a target."""
@@ -165,7 +167,7 @@ def addRemoveMarks():
     anykey = raw_input("Press any key to continue")
     return
 
-def userInterface():
+def userInterface(deck):
     """The menu system that drives the options and allows the player to use the various methods."""
     deckmaxhp = 100
     deckdamage = 0      # Unlike physical damage, deck damage applies no penalties. It will run great right up until it's bricked.
@@ -174,7 +176,7 @@ def userInterface():
 
     length = 80
     leftmargin = 2
-    interfacetext = {0: "Welcome to Matrix Manager version 0.5!",}
+    interfacetext = {0: "Welcome to Matrix Manager version {}!".format(VERSION),}
 
     displayoptions = {
         1:"Change Array",
@@ -188,7 +190,7 @@ def userInterface():
         9:"Change Running Software.",
         10:"Quit",
         }
-    
+
     print length * "#"
     print "#" + (length-2)* " " + "#"
     print "#" + (((length-2) - len(interfacetext[0]))//2)* " " + interfacetext[0].upper() + (((length-2) - len(interfacetext[0]))//2)* " " + "#"
@@ -197,10 +199,10 @@ def userInterface():
     print "STATUS:"
     if modifiers["Simlevel"] == 2:
         print "You are running in hot-sim mode! BE CAREFUL - DAMAGE TAKEN IS LETHAL"
-        print "Matrix initiative: {}d6".format(matrixinitiative + 4)
+        print "Matrix initiative: {}d6".format(str(matrixinitiative) + " + 4")
     else:
         print "You are running in cold-sim mode. Damage taken is stun."
-        print "Matrix initiative: {}d6".format(matrixinitiative + 3)
+        print "Matrix initiative: {}d6".format(str(matrixinitiative) + " + 3")
     print
     print "Current array:"
     for key in deckconfig:
@@ -214,42 +216,76 @@ def userInterface():
     for key in modifiers:
         print 5 * " " + key + ": " + str(modifiers[key])
     print
-    
+
     for key in displayoptions:
         if key % 2 == 0:
-            print "{}: {}\n".format(key, displayoptions[key])
+            print "{}: {}\n".format(key, displayoptions[key]),
         else:
-            print "{}: {}".format(key, displayoptions[key])
-    choice = raw_input("Enter a number to continue (1-10): ")
-    while choice not in str(range(1, 11)):
-        print "\nInvalid option.\n"
-        choice = raw_input("Enter a number to continue (1-10): ")        
-    else:
-        if choice == "1":
-            setMatrixArray()
-        elif choice == "2":
-            setHotCold()
-        elif choice == "3":
-            addRemoveTarget()                       # Not written yet.
-        elif choice == "4":
-            addRemoveMarks()                        # Not written yet.
-        elif choice == "5":
-            setModLevel("noise")                    # Placeholder. Make it insert a real value.
-        elif choice == "6":
-            listModifiers()
-        elif choice == "7":
-            #doMatrixAction("BruteForce", "self")    # Placeholder. Make it insert a real value.
-            listMatrixAction()
-        elif choice == "8":
-            setOverwatchScore()                     # Not written yet.
-        elif choice == "9":
-            setRunningSoftware()                    # Not written yet.
-        elif choice == "10":
-            exit()
-        else:
-            pass
-        userInterface()
+            print "{}: {}".format(key, displayoptions[key]),
+    # choice = raw_input("Enter a number to continue (1-10): ")
+    # while choice not in str(range(1, 11)):
+    #     print "\nInvalid option.\n"
+    #     choice = raw_input("Enter a number to continue (1-10): ")
+    # else:
+    #     if choice == "1":
+    #         pass
+    #         #setMatrixArray()
+    #     elif choice == "2":
+    #         pass
+    #         #setHotCold()
+    #     elif choice == "3":
+    #         pass
+    #         #addRemoveTarget()                       # Not written yet.
+    #     elif choice == "4":
+    #         pass
+    #         #addRemoveMarks()                        # Not written yet.
+    #     elif choice == "5":
+    #         pass
+    #         #setModLevel("noise")                    # Placeholder. Make it insert a real value.
+    #     elif choice == "6":
+    #         pass
+    #         #listModifiers()
+    #     elif choice == "7":
+    #         #doMatrixAction("BruteForce", "self")    # Placeholder. Make it insert a real value.
+    #         pass
+    #         #listMatrixAction()
+    #     elif choice == "8":
+    #         pass
+    #         #setOverwatchScore()                     # Not written yet.
+    #     elif choice == "9":
+    #         pass
+    #         #setRunningSoftware()                    # Not written yet.
+    #     elif choice == "10":
+    #         return
+    #     else:
+    #         pass
     return
 
+##userInterface()
 
-userInterface()
+class Deck:
+    deckmaxhp = 100
+    deckdamage = 0
+
+    pass
+
+class Matrix:
+    leftmargin = 2
+    display_length = 80
+    interfacetext = {0: "Welcome to Matrix Manager version {}!".format(VERSION),}
+    pass
+
+def main():
+    running = True
+    # myMatrix = Matrix()
+    myDeck = Deck()
+
+    while running:
+        userInterface(myDeck)
+        input = raw_input("Enter a number to continue (1-10): ")
+        print input
+        if input == "10":
+            running = False
+    return
+
+main()
