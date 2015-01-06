@@ -12,12 +12,12 @@ deckconfig = {
 
 #dict of modifiers to apply to dice rolls. Modifers are changed by setModLevel()
 modifiers = {
-    "Noise": 0,
-    "GM": 0,
-    "Simlevel":0,
-    "Software":0,
-    "Grid Hopping": 0,
-    "Running Silent": 0
+    "noise": 0,
+    "gm": 0,
+    "simlevel":0,
+    "software":0,
+    "grid hopping": 0,
+    "running silent": 0
     }
 
 marksontarget = {
@@ -61,7 +61,7 @@ def setModLevel(mod):
     return
 
 def setMatrixArray():
-    """Recalibrate's the deck's array based on user input. Not implemented yet."""
+    """Recalibrate's the deck's array based on user input."""
     basearray = list(readConfig("MyDeck", "darray").split(","))
     print "Available array: {} \n".format(basearray)
     for key in deckconfig:
@@ -74,41 +74,49 @@ def setMatrixArray():
     anykey = raw_input("Press any key to continue")
     return
 
-##def listMatrixAction():
-##    """List available matrix actions in a nice, easy to comprehend list."""
-##    d = config.sections()
-##    del d[0:3]
-##    print "\nCommands"
-##    print 
-##    # I don't know this does what I want it to do, but it does it. Yay!
-##    print "\n".join("%-20s %s"%(d[i],d[i+len(d)/2]) for i in range(len(d)/2))
-##    action = raw_input("\nPlease select a command (\"quit\" to go back to main menu): ")
-##    print action
-##    if action.lower in ["quit", "q", "exit"]:
-##        userInterface()
-##    else:
-##        if action not in d:
-##            action = raw_input("Invalid selection. Please select a command: ")
-##    while target.lower() not in marksontarget:
-##        target = raw_input("That is not a valid target. Please enter a valid target: ")
-##    if not doMatrixAction(action, target):
-##        listMatrixAction()
-##    else:
-##        userInterface()
-##    return
+    #This is the glitchiest piece of crap ever and I still don't know why.
+def listMatrixAction():     
+    """List available matrix actions in a nice, easy to comprehend list."""
+    d = config.sections()   # Make a list of all the sections in mydeck.txt
+    del d[0:3]              # Ignore "MyAttributes, My Skills, MyDeck - not matrix actions
+    print "\nCommands"
+    print
+    # This section turns the list of sections into a nice, readable, two-column menu that can be easily fed into the doaction function
+    # Found this code on stackexchange. I don't quite know this does what I want it to do, but it does it. Yay!
+    print "\n".join("%-20s %s"%(d[i],d[i+len(d)/2]) for i in range(len(d)/2))
+    action = raw_input("\nPlease select a command (\"quit\" to go back to main menu): ")
+    # This part is broken. No matter what the input, if it's not in d it's not acknowledged.
+    if action.lower in ["quit", "q", "exit"]:
+        userInterface()
+    else:
+        if action not in d:
+            action = raw_input("Invalid selection. Please select a command: ")
 
-##"This whole section is a clusterfuck I don't have the energy to deal with."
+    # Player forced to keep trying until they get enter a valid entry from d. Not ideal.
+    print "\nCurrent targets:"
+    for key in marksontarget:
+        print key.title() + ": {} marks.".format(marksontarget[key])
+    target = raw_input("Please enter a target for this action. \"Self\" to target self: ")
+    while target.lower() not in marksontarget:
+        target = raw_input("That is not a valid target. Please enter a valid target: ")
+
+    if not doMatrixAction(action, target):  # fucked up? Back to the top!
+        listMatrixAction()
+    else:
+        userInterface() #Mission accomplished? Back to the menu.
+    return
+
 
 def doMatrixAction(action, target):
     """Inform the user how many dice they need to roll and if they have enough marks on the target."""
     try:
-        x = marksontarget[target]
+        x = marksontarget[target]   #error checking. If key error, target not valid and returns False to listMatrixAction()
     except KeyError:
         print "Invalid target entered. Check input and try again.\nYou entered: {}".format(target)
         anykey = raw_input("Press any key to continue")
         return False
     
-    if  readConfig(action,"marksrequired")> marksontarget[target]:
+    if  readConfig(action,"marksrequired")> marksontarget[target]: # Got marks?
         print "You do not have enough marks on the target to carry out this action ({})".format(action)
         anykey = raw_input("Press any key to continue")
         return False
@@ -133,11 +141,11 @@ def doMatrixAction(action, target):
 
 def setHotCold():
     """Switches between running hot-sim and running cold-sim"""
-    if modifiers["Simlevel"] == 0:
-        modifiers.update({"Simlevel":2})
+    if modifiers["simlevel"] == 0:
+        modifiers.update({"simlevel":2})
         print "\nNow running hot-sim. Good luck!\n"
     else:
-        modifiers.update({"Simlevel":0})
+        modifiers.update({"simlevel":0})
         print "\nNow running cold-sim. Good luck!\n"
     anykey = raw_input("Press any key to continue")
     return
@@ -195,7 +203,7 @@ def userInterface():
     print "#" + (length-2)* " " + "#"
     print length * "#" + "\n"
     print "STATUS:"
-    if modifiers["Simlevel"] == 2:
+    if modifiers["simlevel"] == 2:
         print "You are running in hot-sim mode! BE CAREFUL - DAMAGE TAKEN IS LETHAL"
         print "Matrix initiative: {}d6".format(matrixinitiative + 4)
     else:
@@ -234,11 +242,10 @@ def userInterface():
         elif choice == "4":
             addRemoveMarks()                        # Not written yet.
         elif choice == "5":
-            setModLevel("noise")                    # Placeholder. Make it insert a real value.
+            setModLevel("Noise")                    # Placeholder. Make it insert a real value. Also, beware case sensitivity! Noise/noise not the same, dummy.
         elif choice == "6":
             listModifiers()
         elif choice == "7":
-            #doMatrixAction("BruteForce", "self")    # Placeholder. Make it insert a real value.
             listMatrixAction()
         elif choice == "8":
             setOverwatchScore()                     # Not written yet.
