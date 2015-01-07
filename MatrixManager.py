@@ -6,25 +6,26 @@ VERSION = "0.5"
 
 #Dict of deck configuration. This can be switched on the the fly. Array is configured by setMatrixArray()
 deckconfig = {
-    "Attack":3,
-    "Firewall":3,
-    "Sleaze":4,
-    "DataProcessing":1
+    "attack":3,
+    "firewall":3,
+    "sleaze":4,
+    "data processing":1
     }
 
 #dict of modifiers to apply to dice rolls. Modifers are changed by setModLevel()
 modifiers = {
-    "Noise": 0,
-    "GM": 0,
-    "Simlevel":0,
-    "Software":0,
-    "Grid Hopping": 0,
-    "Running Silent": 0
+    "noise": 0,
+    "gm": 0,
+    "simlevel":0,
+    "software":0,
+    "grid hopping": 0,
+    "running silent": 0,
+    "physical damage": 0,   # Matrix damage doesn't hurt performance, but meatspace damage does.
+    "stun damage":0,        # Ditto for stun.
     }
 
 marksontarget = {
     "self": 4,
-    "cameras":1,
     }   # Number of marks on the target controls what options are available. You always have four marks on your own gear.
 
 def readConfig(heading, item):
@@ -37,7 +38,7 @@ def readConfig(heading, item):
     return
 
 def calculateModifiers():
-    """Sums all the values in the modifiers array. Possibly needs genericising"""
+    """Sums all the values in the modifiers array."""
     return sum(modifiers.itervalues())
 
 def listModifiers():
@@ -47,12 +48,11 @@ def listModifiers():
             pass
         else:
             print mod.title() + ": ", value
-    anykey = raw_input("Press any key to continue")
     return
 
 def setModLevel(mod):
     """Sets the appropriate level for modifier."""
-    print "Please enter an appropriate value for " + mod
+    print "Please enter an appropriate value for {}".format(mod.title())
     try:
         level = int(raw_input("> "))
         modifiers.update({mod:level})
@@ -63,12 +63,12 @@ def setModLevel(mod):
     return
 
 def setMatrixArray():
-    """Recalibrate's the deck's array based on user input. Not implemented yet."""
+    """Recalibrate's the deck's array based on user input."""
     basearray = list(readConfig("MyDeck", "darray").split(","))
     print "Available array: {} \n".format(basearray)
     for key in deckconfig:
         try:
-            value = int(raw_input("Please enter a value for {}: ".format(key)))
+            value = int(raw_input("Please enter a value for {}: ".format(key.title())))
             deckconfig.update({key:value})
         except:
             print "\nInvalid input. Please try again.\n"
@@ -76,41 +76,41 @@ def setMatrixArray():
     anykey = raw_input("Press any key to continue")
     return
 
-##def listMatrixAction():
-##    """List available matrix actions in a nice, easy to comprehend list."""
-##    d = config.sections()
-##    del d[0:3]
-##    print "\nCommands"
-##    print
-##    # I don't know this does what I want it to do, but it does it. Yay!
-##    print "\n".join("%-20s %s"%(d[i],d[i+len(d)/2]) for i in range(len(d)/2))
-##    action = raw_input("\nPlease select a command (\"quit\" to go back to main menu): ")
-##    print action
-##    if action.lower in ["quit", "q", "exit"]:
-##        userInterface()
-##    else:
-##        if action not in d:
-##            action = raw_input("Invalid selection. Please select a command: ")
-##    while target.lower() not in marksontarget:
-##        target = raw_input("That is not a valid target. Please enter a valid target: ")
-##    if not doMatrixAction(action, target):
-##        listMatrixAction()
-##    else:
-##        userInterface()
-##    return
+    # Stripped out all that conditional nonsense just so I can have lookup working. Will come back to this shit later.
+    # For now, I'm just gonna be lazy and use trust the error handling in doMatrixAction() to handle any fuckups.
+def listMatrixAction():
+    """List available matrix actions in a nice, easy to comprehend list."""
+    d = config.sections()   # Make a list of all the sections in mydeck.txt
+    del d[0:3]              # Ignore "MyAttributes, My Skills, MyDeck - not matrix actions
+    print "\nCommands"
+    print
+    # This section turns the list of sections into a nice, readable, two-column menu that can be easily fed into the doaction function
+    # Found this code on stackoverflow. I don't quite understand how this does what I want it to do, but it does it. Yay!
+    print "\n".join("%-20s %s"%(d[i],d[i+len(d)/2]) for i in range(len(d)/2))
+    print
+    print "\nCurrent targets:"
+    for key in marksontarget:
+        print key.title() + ": {} marks.".format(marksontarget[key])
+    action = raw_input("Enter a Command: ")
+    target = raw_input("Enter a target from the list above: ").lower()
+    print
+    if not doMatrixAction(action, target):  # fucked up? Back to the top!
+        listMatrixAction()
+    else:
+        userInterface() #Mission accomplished? Back to the menu.
+    return
 
-##"This whole section is a clusterfuck I don't have the energy to deal with."
 
 def doMatrixAction(action, target):
     """Inform the user how many dice they need to roll and if they have enough marks on the target."""
     try:
-        x = marksontarget[target]
+        x = marksontarget[target]   #error checking. If key error, target not valid and returns False to listMatrixAction()
     except KeyError:
         print "Invalid target entered. Check input and try again.\nYou entered: {}".format(target)
         anykey = raw_input("Press any key to continue")
         return False
-
-    if  readConfig(action,"marksrequired")> marksontarget[target]:
+        #Might remove the marks check. What if you just want to know how a command works? It's not like it's rolling dice for the user.
+    if  readConfig(action,"marksrequired")> marksontarget[target]: # Got marks?
         print "You do not have enough marks on the target to carry out this action ({})".format(action)
         anykey = raw_input("Press any key to continue")
         return False
@@ -126,27 +126,43 @@ def doMatrixAction(action, target):
             print "Test: None (See Description)"
         else:
             print "Test: {} ({}) + {} ({}) = {}d6 (including modifiers)".format(program['skill'].title(), skill ,program['attribute'].title(), attribute, attribute + skill + calculateModifiers())
-        print "Relevant limit: {} ({})".format(program["limitedby"],decklimit)
+        print "Relevant limit: {} ({})".format(program["limitedby"].title(),decklimit)
         print "Opposed by: " + program["opposedby"] + "\n"
         print "Modifiers applied:"
         listModifiers()
-        print "\n"
+        print
+        anykey = raw_input("Press any key to continue")
+        userInterface()
+        print
     return
+
+def setMatrixDamage(total, damage):
+    """Helps with damage tracking. Keeping this one really simple."""
+    print "Current deck HP = {}/{}".format(total - damage, total)
+    newHP = raw_input("How much damage did you take?: ")
+    pain = int(newHP) * -1
+    print pain
+    return pain
 
 def setHotCold():
     """Switches between running hot-sim and running cold-sim"""
-    if modifiers["Simlevel"] == 0:
-        modifiers.update({"Simlevel":2})
+    if modifiers["simlevel"] == 0:
+        modifiers.update({"simlevel":2})
         print "\nNow running hot-sim. Good luck!\n"
     else:
-        modifiers.update({"Simlevel":0})
+        modifiers.update({"simlevel":0})
         print "\nNow running cold-sim. Good luck!\n"
     anykey = raw_input("Press any key to continue")
     return
 
-def setOverwatchScore():
-    """Helps tracking of overwatch score. Not implemented yet."""
-    print "Not implemented yet"
+def setRunningSilent():
+    """Switches between silent running (-2) and normal running (0)"""
+    if modifiers["running silent"] == 0:
+        modifiers.update({"running silent":-2})
+        print "\nNow running silent (-2). Good luck!\n"
+    else:
+        modifiers.update({"running silent":0})
+        print "\nNo longer running silent. Good luck!\n"
     anykey = raw_input("Press any key to continue")
     return
 
@@ -157,22 +173,40 @@ def setRunningSoftware():
 
 def addRemoveTarget():
     """Add or remove a target."""
-    print "Not implemented yet"
+
+    choice = raw_input("[1] Add or [2] Remove a target?: ")
+    if choice not in str(range(1,3)):
+        print "Invalid choice. Try again.\n"
+    elif choice == str(1):
+        newtarget = raw_input("Please enter ID of target: ")
+        marksontarget[newtarget.lower()] = 0
+    else:
+        deltarget = raw_input("Please enter ID of target: ")
+        del marksontarget[deltarget.lower()]
     anykey = raw_input("Press any key to continue")
+    print
+    userInterface()
     return
 
 def addRemoveMarks():
-    """Add or remove a target."""
-    print "Not implemented yet"
+    """Add or remove marks from a target."""
+    choice = raw_input("Please enter ID of target: ")
+    if choice not in marksontarget:
+        print "Invalid choice. Try again.\n"
+    else:
+        marks = raw_input("Please enter the number of marks on target: ")
+        marksontarget[choice.lower()] = int(marks)
     anykey = raw_input("Press any key to continue")
+    print
+    userInterface()
     return
 
 def userInterface(deck):
     """The menu system that drives the options and allows the player to use the various methods."""
-    deckmaxhp = 100
-    deckdamage = 0      # Unlike physical damage, deck damage applies no penalties. It will run great right up until it's bricked.
+    deckmaxhp = 9       # Actually, it's 8 + (Deck Rating/2) but I can't quite work out how to make this behave with a level 1 device
+    deckdamage = 0      # So for now, it's hard coded.
     linklocked = False  # Some options not possible while link-locked
-    matrixinitiative = readConfig("MyAttributes", "int") + deckconfig["DataProcessing"]
+    matrixinitiative = readConfig("MyAttributes", "int") + deckconfig["data processing"]
 
     length = 80
     leftmargin = 2
@@ -180,13 +214,13 @@ def userInterface(deck):
 
     displayoptions = {
         1:"Change Array",
-        2:"Switch Running Mode",
+        2:"Toggle Running Mode",
         3:"Add/Remove Target",
         4:"Add/Remove Marks",
         5:"Update Modifiers",
-        6:"List Modifiers",
+        6:"Toggle Running Silent",
         7:"Perform a Matrix Action",
-        8:"Update Overwatch Score",
+        8:"Add/Remove damage",
         9:"Change Running Software.",
         10:"Quit",
         }
@@ -196,17 +230,17 @@ def userInterface(deck):
     print "#" + (((length-2) - len(interfacetext[0]))//2)* " " + interfacetext[0].upper() + (((length-2) - len(interfacetext[0]))//2)* " " + "#"
     print "#" + (length-2)* " " + "#"
     print length * "#" + "\n"
-    print "STATUS:"
-    if modifiers["Simlevel"] == 2:
+    print "STATUS:" + 10 * " " + "dHP: {}/{}".format(deckmaxhp - deckdamage, deckmaxhp)
+    if modifiers["simlevel"] == 2:
         print "You are running in hot-sim mode! BE CAREFUL - DAMAGE TAKEN IS LETHAL"
-        print "Matrix initiative: {}d6".format(str(matrixinitiative) + " + 4")
+        print "Matrix initiative: {} + 4d6".format(matrixinitiative)
     else:
         print "You are running in cold-sim mode. Damage taken is stun."
-        print "Matrix initiative: {}d6".format(str(matrixinitiative) + " + 3")
+        print "Matrix initiative: {} + 3d6".format(matrixinitiative)
     print
-    print "Current array:"
+    print "Current Array:"
     for key in deckconfig:
-        print 5 * " " + key + ": " + str(deckconfig[key])
+        print 5 * " " + key.title() + ": " + str(deckconfig[key])
     print
     print "Current Targets/Marks: "
     for key in marksontarget:
@@ -214,7 +248,7 @@ def userInterface(deck):
     print
     print "Active Modifiers:"
     for key in modifiers:
-        print 5 * " " + key + ": " + str(modifiers[key])
+        print 5 * " " + key.title() + ": " + str(modifiers[key])
     print
 
     for key in displayoptions:
