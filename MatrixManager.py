@@ -1,6 +1,8 @@
-import ConfigParser, fileinput, itertools
+import ConfigParser, fileinput, itertools, pprint, readline
 config = ConfigParser.RawConfigParser()
-config.read('myDeck.txt')
+config.read('myDeck.ini')
+
+VERSION = "0.5"
 
 #Dict of deck configuration. This can be switched on the the fly. Array is configured by setMatrixArray()
 deckconfig = {
@@ -76,7 +78,7 @@ def setMatrixArray():
 
     # Stripped out all that conditional nonsense just so I can have lookup working. Will come back to this shit later.
     # For now, I'm just gonna be lazy and use trust the error handling in doMatrixAction() to handle any fuckups.
-def listMatrixAction():     
+def listMatrixAction():
     """List available matrix actions in a nice, easy to comprehend list."""
     d = config.sections()   # Make a list of all the sections in mydeck.txt
     del d[0:3]              # Ignore "MyAttributes, My Skills, MyDeck - not matrix actions
@@ -114,7 +116,7 @@ def doMatrixAction(action, target):
         return False
     else:
         program = dict(config.items(action)) #config.items gets all the attributes in the "action" section in a list of tuples. Dict turns this into a dict.
-        skill = readConfig("MySkills", program["skill"]) 
+        skill = readConfig("MySkills", program["skill"])
         attribute = readConfig("MyAttributes", program["attribute"])
         decklimit = deckconfig[readConfig(action,"limitedby")]
         print action.upper() + " ({} action)".format(program['actiontype'].title())
@@ -167,7 +169,7 @@ def setRunningSilent():
 def setRunningSoftware():
     """Activates and deactivates software up to the DP limit. Not implemented yet."""
     print "Not implemented yet."
-    return 
+    return
 
 def addRemoveTarget():
     """Add or remove a target."""
@@ -180,7 +182,7 @@ def addRemoveTarget():
         marksontarget[newtarget.lower()] = 0
     else:
         deltarget = raw_input("Please enter ID of target: ")
-        del marksontarget[deltarget.lower()]        
+        del marksontarget[deltarget.lower()]
     anykey = raw_input("Press any key to continue")
     print
     userInterface()
@@ -199,7 +201,7 @@ def addRemoveMarks():
     userInterface()
     return
 
-def userInterface():
+def userInterface(deck):
     """The menu system that drives the options and allows the player to use the various methods."""
     deckmaxhp = 9       # Actually, it's 8 + (Deck Rating/2) but I can't quite work out how to make this behave with a level 1 device
     deckdamage = 0      # So for now, it's hard coded.
@@ -208,7 +210,7 @@ def userInterface():
 
     length = 80
     leftmargin = 2
-    interfacetext = {0: "Welcome to Matrix Manager version 0.5!",}
+    interfacetext = {0: "Welcome to Matrix Manager version {}!".format(VERSION),}
 
     displayoptions = {
         1:"Change Array",
@@ -222,7 +224,7 @@ def userInterface():
         9:"Change Running Software.",
         10:"Quit",
         }
-    
+
     print length * "#"
     print "#" + (length-2)* " " + "#"
     print "#" + (((length-2) - len(interfacetext[0]))//2)* " " + interfacetext[0].upper() + (((length-2) - len(interfacetext[0]))//2)* " " + "#"
@@ -248,48 +250,76 @@ def userInterface():
     for key in modifiers:
         print 5 * " " + key.title() + ": " + str(modifiers[key])
     print
-    
+
     for key in displayoptions:
         if key % 2 == 0:
-            print "{}: {}\n".format(key, displayoptions[key])
+            print "{}: {}\n".format(key, displayoptions[key]),
         else:
-            print "{}: {}".format(key, displayoptions[key])
-    choice = raw_input("Enter a number to continue (1-10): ")
-    while choice not in str(range(1, 11)):
-        print "\nInvalid option.\n"
-        choice = raw_input("Enter a number to continue (1-10): ")        
-    else:
-        if choice == "1":
-            setMatrixArray()
-        elif choice == "2":
-            setHotCold()
-        elif choice == "3":
-            addRemoveTarget()                       # Now working!
-        elif choice == "4":
-            addRemoveMarks()                        # Now working!  
-        elif choice == "5":
-            for key in modifiers:
-                print key.title(), ": {}".format(modifiers[key])
-            mod = raw_input("Please select a modifier: ")
-            if mod.lower() not in modifiers:
-                print "\nModifier not found.\n"
-                anykey = raw_input("Press any key to continue.")
-            else:
-                setModLevel(mod)            
-        elif choice == "6":
-            setRunningSilent()                      # Toggle whether you're running silent or not. Could be done by setModLevel() but it doesn't need flexibility
-        elif choice == "7":
-            listMatrixAction()
-        elif choice == "8":                         # This should be trivial, but for some reason it's just not working. Fuck it, not important for now.
-            print "Not implemented yet."
-        elif choice == "9":
-            setRunningSoftware()                    # Not written yet. Actually kinda important, but I'm being lazy.
-        elif choice == "10":
-            exit()
-        else:
-            pass
-        userInterface()
+            print "{}: {}".format(key, displayoptions[key]),
+    # choice = raw_input("Enter a number to continue (1-10): ")
+    # while choice not in str(range(1, 11)):
+    #     print "\nInvalid option.\n"
+    #     choice = raw_input("Enter a number to continue (1-10): ")
+    # else:
+    #     if choice == "1":
+    #         pass
+    #         #setMatrixArray()
+    #     elif choice == "2":
+    #         pass
+    #         #setHotCold()
+    #     elif choice == "3":
+    #         pass
+    #         #addRemoveTarget()                       # Not written yet.
+    #     elif choice == "4":
+    #         pass
+    #         #addRemoveMarks()                        # Not written yet.
+    #     elif choice == "5":
+    #         pass
+    #         #setModLevel("noise")                    # Placeholder. Make it insert a real value.
+    #     elif choice == "6":
+    #         pass
+    #         #listModifiers()
+    #     elif choice == "7":
+    #         #doMatrixAction("BruteForce", "self")    # Placeholder. Make it insert a real value.
+    #         pass
+    #         #listMatrixAction()
+    #     elif choice == "8":
+    #         pass
+    #         #setOverwatchScore()                     # Not written yet.
+    #     elif choice == "9":
+    #         pass
+    #         #setRunningSoftware()                    # Not written yet.
+    #     elif choice == "10":
+    #         return
+    #     else:
+    #         pass
     return
 
-userInterface()
+##userInterface()
 
+class Deck:
+    deckmaxhp = 100
+    deckdamage = 0
+
+    pass
+
+class Matrix:
+    leftmargin = 2
+    display_length = 80
+    interfacetext = {0: "Welcome to Matrix Manager version {}!".format(VERSION),}
+    pass
+
+def main():
+    running = True
+    # myMatrix = Matrix()
+    myDeck = Deck()
+
+    while running:
+        userInterface(myDeck)
+        input = raw_input("Enter a number to continue (1-10): ")
+        print input
+        if input == "10":
+            running = False
+    return
+
+main()
